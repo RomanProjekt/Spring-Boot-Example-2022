@@ -1,19 +1,92 @@
 package com.example.demo;
 
 
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.OptionalInt;
 
-
+@Service
 public class StudentService {
 
+    private final StudentRepository studentRepository;
+
+    @Autowired
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
 
     public List<Student> getStudents() {
-
-        return List.of(new Student(1L, "Mariam", "maria.thomasen@gmail.com", LocalDate.of(2000, Month.JULY, 12)), 33)
-
-
+        return studentRepository.findAll();
     }
+
+
+    public void addNewStudent(Student student) {
+        System.out.println(student);
+        Optional<Student> studentbyEmail = studentRepository.findStudentbyEmail(student.getEmail());
+        if(studentbyEmail.isPresent()) {
+            throw new IllegalStateException("email taken");
+        }
+        studentRepository.save(student);
+    }
+
+    public void deleteStudent(Long studentid) {
+        boolean studentExist = studentRepository.existsById(studentid);
+        if(!studentExist) {
+            throw new IllegalStateException("Student mit der ID " + studentid + " existiert nicht!");
+        }
+        studentRepository.deleteById(studentid);
+    }
+
+    @Transactional
+    public void updateStudent(Long studentId, String name, String email) {
+         Student student = studentRepository.findById(studentId).
+                 orElseThrow(() ->
+                         new IllegalStateException("Student mit id " + studentId + "existiert nicht!" ));
+
+
+         if(name != null && name.length() > 0 && !Objects.equals(student.getName(), name)) {
+             student.setName(name);
+         }
+
+        if(email != null && email.length() > 0 && !Objects.equals(student.getEmail(), email)) {
+            Optional<Student> studentOptional = studentRepository.findStudentbyEmail(email);
+            if(studentOptional.isPresent()) {
+                throw new IllegalStateException("email taken");
+            }
+            student.setEmail(email);
+        }
+    }
+
+
+
+   
+
+
+
+    /*public void findStudentbyEmail(Student student) {
+        System.out.println(student);
+        Optional<Student> studentbyEmail = studentRepository.findStudentByEmail(student.getEmail());
+        if(!studentbyEmail.isPresent()) {
+            throw new IllegalStateException("email taken");
+        }
+        studentRepository.save(student);
+    }
+    */
+
+
+
+
+
+
+
 }

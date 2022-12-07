@@ -1,18 +1,19 @@
 package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
-
+@RestController
 @RequestMapping(path="api/v1/student")
 public class StudentController {
 
-    @Autowired
+
     private final StudentService studentService;
 
+    @Autowired
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
@@ -21,6 +22,34 @@ public class StudentController {
     public List<Student> getStudents() {
         return studentService.getStudents();
     }
+
+    @PostMapping
+    public void registerNewStudent(@RequestBody Student student) {
+        studentService.addNewStudent(student);
+    }
+
+    @DeleteMapping(path="{studentId}")
+    public void deleteStudent(@PathVariable("studentId") Long student) {
+        studentService.deleteStudent(student);
+    }
+
+    @PutMapping(path = "{studentId}")
+    public void updateStudent(
+            @PathVariable("studentId") Long studentId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email) {
+        studentService.updateStudent(studentId, name, email);
+    }
+
+
+   /* @PostMapping("api/v1/student/find")
+    public void findStudentbyEmail(@RequestBody Student student) {
+        studentService.findStudentbyEmail(student);
+    }
+    */
+
+
+
 
 
 }
