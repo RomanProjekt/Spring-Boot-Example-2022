@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.springbootexample;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;

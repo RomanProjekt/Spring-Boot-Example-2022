@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.springbootexample;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ public class StudentConfig {
                     1L,
                     "Maria",
                     "maria.thomasen@gmail.com",
-                    LocalDate.of(2021, Month.DECEMBER, 5)
+                    LocalDate.of(1990, Month.DECEMBER, 5)
 
             );
 
